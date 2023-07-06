@@ -41,11 +41,10 @@ public class MainActivity extends AppCompatActivity {
                     String name = edt_name.getText().toString();
                     String status = edt_status.getText().toString();
                     String desc = edt_desc.getText().toString();
-
-                    if (!DB.checkExistStudentInDB(id)) {
-                        Job studentModel = new Job(id, name, status, desc);
-                        boolean checkInsertData = DB.insertStudent(studentModel);
-                        if (checkInsertData) {
+                    if (!DB.checkExistJob(id)) {
+                        Job job = new Job(id, name, status, desc);
+                        boolean isAdded = DB.addJob(job);
+                        if (isAdded) {
                             Toast.makeText(MainActivity.this, "Add successfully!", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(MainActivity.this, "Add failed!", Toast.LENGTH_SHORT).show();
@@ -56,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                         job.setName(name);
                         job.setStatus(status);
                         job.setDescription(desc);
-                        int i = DB.updateStudent(job);
+                        int i = DB.updateJob(job);
                         if (i >= 1) {
                             Toast.makeText(MainActivity.this, "Update successfully!", Toast.LENGTH_SHORT).show();
                         } else {
@@ -74,23 +73,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // list student
+        // list job
         btn_list.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                jobList.clear();
                 String id = edt_id.getText().toString();
                 String name = edt_name.getText().toString();
                 String status = edt_status.getText().toString();
                 String desc = edt_desc.getText().toString();
 
-                ArrayList<String> arrSearch = new ArrayList<>();
-                arrSearch.add(id);
-                arrSearch.add(name);
-                arrSearch.add(status);
-                arrSearch.add(desc);
+                ArrayList<String> listJob = new ArrayList<>();
+                listJob.add(id);
+                listJob.add(name);
+                listJob.add(status);
+                listJob.add(desc);
 
-                List<Job> jobList = DB.searchStudents(arrSearch);
+                List<Job> jobList = DB.searchStudents(listJob);
 
                 JobAdapter = new JobAdapter(MainActivity.this, jobList);
                 recyclerView.setAdapter(JobAdapter);
@@ -98,21 +96,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // delete student
+        // delete job
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    jobList.clear();
-                    int id = Integer.parseInt(edt_id.getText().toString().trim());
-                    Job studentModel = DB.getStudent(id);
-                    DB.deleteStudent(studentModel);
+                    String id = edt_id.getText().toString();
+                    Job job = DB.getJobById(id);
+                    DB.deleteJob(job);
                     Toast.makeText(MainActivity.this, "Delete successfully!", Toast.LENGTH_SHORT).show();
 
-                    jobList = DB.getAllStudents();
-                    JobAdapter = new JobAdapter(MainActivity.this, jobList);
-                    recyclerView.setAdapter(JobAdapter);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+//                    jobList = DB.getAllJobs();
+//                    JobAdapter = new JobAdapter(MainActivity.this, jobList);
+//                    recyclerView.setAdapter(JobAdapter);
+//                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
                 } catch (Exception e) {
                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -124,31 +121,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    jobList.clear();
-                    int id = Integer.parseInt(edt_id.getText().toString().trim());
-                    String name = edt_name.getText().toString().trim();
-                    String status = edt_status.getText().toString().trim();
-                    String desc = edt_desc.getText().toString().trim();
-                    Job studentModel = DB.getStudent(id);
-                    studentModel.setName(name);
-                    studentModel.setStatus(status);
-                    studentModel.setDescription(desc);
-                    DB.updateStudent(studentModel);
+                    String id = edt_id.getText().toString();
+                    String name = edt_name.getText().toString();
+                    String status = edt_status.getText().toString();
+                    String desc = edt_desc.getText().toString();
+                    Job job = DB.getJobById(id);
+                    job.setName(name);
+                    job.setStatus(status);
+                    job.setDescription(desc);
+                    DB.updateJob(job);
                     Toast.makeText(MainActivity.this, "Update successfully!", Toast.LENGTH_SHORT).show();
 
-                    jobList = DB.getAllStudents();
-                    JobAdapter = new JobAdapter(MainActivity.this, jobList);
-                    recyclerView.setAdapter(JobAdapter);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+//                    jobList = DB.getAllJobs();
+//                    JobAdapter = new JobAdapter(MainActivity.this, jobList);
+//                    recyclerView.setAdapter(JobAdapter);
+//                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
                 } catch (Exception e) {
                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        jobList = DB.getAllStudents();
-        JobAdapter = new JobAdapter(MainActivity.this, jobList);
-        recyclerView.setAdapter(JobAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+//        jobList = DB.getAllJobs();
+//        JobAdapter = new JobAdapter(MainActivity.this, jobList);
+//        recyclerView.setAdapter(JobAdapter);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
     }
 
     private void bindingView() {

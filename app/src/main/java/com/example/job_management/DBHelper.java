@@ -13,17 +13,20 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static final String JOB_TABLE = "Job";
     public static final String ID_COLUMN = "id";
-    public static final String NAME_COLUMN = "fullname";
+    public static final String NAME_COLUMN = "name";
     public static final String STATUS_COLUMN = "status";
     public static final String DESC_COLUMN = "description";
 
     public DBHelper(Context context) {
-        super(context, JOB_TABLE + "Data.db", null, 1);
+        super(context, JOB_TABLE, null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase DB) {
-        DB.execSQL("create table " + JOB_TABLE + "(" + ID_COLUMN + " TEXT primary key, " + NAME_COLUMN + " TEXT, " + STATUS_COLUMN + " TEXT, " + DESC_COLUMN + " TEXT)");
+        DB.execSQL("create table " + JOB_TABLE + "("
+                + ID_COLUMN + " TEXT primary key, "
+                + NAME_COLUMN + " TEXT, " + STATUS_COLUMN
+                + " TEXT, " + DESC_COLUMN + " TEXT)");
     }
 
     @Override
@@ -34,34 +37,10 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean insertStudent(Job job) {
-        SQLiteDatabase DB = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(ID_COLUMN, job.getId());
-        contentValues.put(NAME_COLUMN, job.getName());
-        contentValues.put(STATUS_COLUMN, job.getStatus());
-        contentValues.put(DESC_COLUMN, job.getDescription());
-        long result = DB.insert(JOB_TABLE, null, contentValues);
-        DB.close();
-        if (result == -1) {
-            return false;
-        }
-        return true;
-    }
-
-    public void deleteStudent(Job job) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(JOB_TABLE, ID_COLUMN + " = ?",
-                new String[]{job.getId()});
-        db.close();
-    }
-
-
-    public boolean checkExistStudentInDB(String id) {
+    public boolean checkExistJob(String id) {
         SQLiteDatabase db = this.getReadableDatabase();
-
-        String query = "select * from " + JOB_TABLE + " where " + ID_COLUMN + " = " + id;
-        Cursor cursor = db.rawQuery(query, null);
+        String sql = "select * from " + JOB_TABLE + " where " + ID_COLUMN + " = " + id;
+        Cursor cursor = db.rawQuery(sql, null);
         if (cursor.getCount() <= 0) {
             cursor.close();
             return false;
@@ -70,37 +49,46 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public Job getStudent(int id) {
+    public boolean addJob(Job job) {
+        SQLiteDatabase DB = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(ID_COLUMN, job.getId());
+        values.put(NAME_COLUMN, job.getName());
+        values.put(STATUS_COLUMN, job.getStatus());
+        values.put(DESC_COLUMN, job.getDescription());
+        long newRowId = DB.insert(JOB_TABLE, null, values);
+        DB.close();
+        if (newRowId == -1) return false;
+        return true;
+    }
+
+    public void deleteJob(Job job) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(JOB_TABLE, ID_COLUMN + " = ?",
+                new String[]{job.getId()});
+        db.close();
+    }
+
+
+    public Job getJobById(String id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(JOB_TABLE, new String[]{ID_COLUMN,
                         NAME_COLUMN, STATUS_COLUMN, DESC_COLUMN}, ID_COLUMN + "= ?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
-
-        int anInt = cursor.getInt(0);
-        String string = cursor.getString(1);
-        String string1 = cursor.getString(2);
-        String string2 = cursor.getString(3);
-
-        Job studentModel = new Job(cursor.getString(0),
-                cursor.getString(1), cursor.getString(2), cursor.getString(3));
-        // return student
-        return studentModel;
+        if (cursor != null) cursor.moveToFirst();
+        Job job = new Job(cursor.getString(0), cursor.getString(1),
+                cursor.getString(2), cursor.getString(3));
+        return job;
     }
 
-    public List<Job> getAllStudents() {
+    public List<Job> getAllJobs() {
         List<Job> jobList = new ArrayList<>();
-        // Select All Query
-        String selectQuery = "SELECT  * FROM " + JOB_TABLE;
-
+        String sql = "SELECT  * FROM " + JOB_TABLE;
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = db.rawQuery(sql, null);
 
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
+            while (cursor.moveToNext()) {
                 Job job = new Job();
                 job.setId(cursor.getString(0));
                 job.setName(cursor.getString(1));
@@ -108,10 +96,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 job.setDescription(cursor.getString(3));
                 // Adding student to list
                 jobList.add(job);
-            } while (cursor.moveToNext());
-        }
-
-        // return student list
+            } ;
         return jobList;
     }
 
@@ -125,31 +110,24 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                Job studentModel = new Job();
-                studentModel.setId((cursor.getString(0)));
-                studentModel.setName(cursor.getString(1));
-                studentModel.setStatus(cursor.getString(2));
-                studentModel.setDescription(cursor.getString(3));
-                // Adding student to list
-                jobList.add(studentModel);
-            } while (cursor.moveToNext());
-        }
 
-        // return student list
+        while (cursor.moveToNext()){
+                Job job = new Job();
+                job.setId((cursor.getString(0)));
+                job.setName(cursor.getString(1));
+                job.setStatus(cursor.getString(2));
+                job.setDescription(cursor.getString(3));
+                jobList.add(job);
+            }
         return jobList;
     }
 
-    public int updateStudent(Job job) {
+    public int updateJob(Job job) {
         SQLiteDatabase db = this.getWritableDatabase();
-
         ContentValues values = new ContentValues();
         values.put(NAME_COLUMN, job.getName());
         values.put(STATUS_COLUMN, job.getStatus());
         values.put(DESC_COLUMN, job.getDescription());
-
-        // updating row
         return db.update(JOB_TABLE, values, ID_COLUMN + " = ?",
                 new String[]{job.getId()});
     }

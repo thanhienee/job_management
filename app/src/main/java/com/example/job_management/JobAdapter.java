@@ -22,19 +22,18 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
     @NonNull
     @Override
     public JobAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(context).inflate(R.layout.job_row, parent, false);
+        View v = LayoutInflater.from(context).inflate(R.layout.job_row, parent, false);
 
-        return new ViewHolder(itemView);
+        return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull JobAdapter.ViewHolder holder, int position) {
         Job job = jobList.get(position);
-
-        holder.id.setText(job.getId());
-        holder.name.setText(job.getName());
-        holder.status.setText(job.getStatus());
-        holder.desc.setText(job.getDescription());
+        holder.tv_id.setText(job.getId());
+        holder.tv_name.setText(job.getName());
+        holder.tv_status.setText(job.getStatus());
+        holder.tv_desc.setText(job.getDescription());
     }
 
     @Override
@@ -43,15 +42,15 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView id, name, status, desc;
+        TextView tv_id, tv_name, tv_status, tv_desc;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            id = itemView.findViewById(R.id.tv_name);
-            name = itemView.findViewById(R.id.tv_name);
-            status = itemView.findViewById(R.id.tv_status);
-            desc = itemView.findViewById(R.id.tv_desc);
+            tv_id = itemView.findViewById(R.id.tv_id);
+            tv_name = itemView.findViewById(R.id.tv_name);
+            tv_status = itemView.findViewById(R.id.tv_status);
+            tv_desc = itemView.findViewById(R.id.tv_desc);
         }
     }
 }

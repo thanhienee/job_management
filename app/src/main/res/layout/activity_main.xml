@@ -95,7 +95,8 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_marginStart="11dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/round_corner_btn"
         android:text="ADD"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edt_desc" />
@@ -108,7 +109,8 @@
         android:layout_marginTop="30dp"
         android:text="DELETE"
         app:layout_constraintStart_toEndOf="@+id/btn_update"
-        app:layout_constraintTop_toBottomOf="@+id/edt_desc" />
+        app:layout_constraintTop_toBottomOf="@+id/edt_desc"
+        android:background="@drawable/round_corner_btn"/>
 
     <Button
         android:id="@+id/btn_update"
@@ -118,7 +120,8 @@
         android:layout_marginTop="30dp"
         android:text="UPDATE"
         app:layout_constraintStart_toEndOf="@+id/btn_add"
-        app:layout_constraintTop_toBottomOf="@+id/edt_desc" />
+        app:layout_constraintTop_toBottomOf="@+id/edt_desc"
+        android:background="@drawable/round_corner_btn"/>
 
     <Button
         android:id="@+id/btn_list"
@@ -128,7 +131,8 @@
         android:layout_marginTop="30dp"
         android:text="LIST"
         app:layout_constraintStart_toEndOf="@+id/btn_delete"
-        app:layout_constraintTop_toBottomOf="@+id/edt_desc" />
+        app:layout_constraintTop_toBottomOf="@+id/edt_desc"
+        android:background="@drawable/round_corner_btn"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
