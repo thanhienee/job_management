@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DBHelper extends SQLiteOpenHelper {
+public class SQLiteHelper extends SQLiteOpenHelper {
 
     public static final String JOB_TABLE = "Job";
     public static final String ID_COLUMN = "id";
@@ -17,7 +17,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String STATUS_COLUMN = "status";
     public static final String DESC_COLUMN = "description";
 
-    public DBHelper(Context context) {
+    public SQLiteHelper(Context context) {
         super(context, JOB_TABLE, null, 1);
     }
 
@@ -64,18 +64,18 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void deleteJob(Job job) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(JOB_TABLE, ID_COLUMN + " = ?",
-                new String[]{job.getId()});
+        String selection = ID_COLUMN + " LIKE ? ";
+        String[] selectionArgs = new String[]{job.getId()};
+        db.delete(JOB_TABLE, selection, selectionArgs);
         db.close();
     }
 
-
     public Job getJobById(String id) {
         SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.query(JOB_TABLE, new String[]{ID_COLUMN,
-                        NAME_COLUMN, STATUS_COLUMN, DESC_COLUMN}, ID_COLUMN + "= ?",
-                new String[]{String.valueOf(id)}, null, null, null, null);
+        String selection = ID_COLUMN + " LIKE ? ";
+        String[] selectionArgs = new String[]{id};
+        Cursor cursor = db.query(JOB_TABLE, null, selection,
+                selectionArgs, null, null, null, null);
         if (cursor != null) cursor.moveToFirst();
         Job job = new Job(cursor.getString(0), cursor.getString(1),
                 cursor.getString(2), cursor.getString(3));
@@ -87,29 +87,27 @@ public class DBHelper extends SQLiteOpenHelper {
         String sql = "SELECT  * FROM " + JOB_TABLE;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(sql, null);
-
             while (cursor.moveToNext()) {
                 Job job = new Job();
                 job.setId(cursor.getString(0));
                 job.setName(cursor.getString(1));
                 job.setStatus(cursor.getString(2));
                 job.setDescription(cursor.getString(3));
-                // Adding student to list
                 jobList.add(job);
-            } ;
+            }
         return jobList;
     }
 
-    public List<Job> searchStudents(ArrayList<String> arrSearch) {
+    public List<Job> searchJobs(ArrayList<String> jobSearch) {
         List<Job> jobList = new ArrayList<>();
-        // Select All Query
-        String selectQuery = "select * from " + JOB_TABLE ;
-
+        String sql = "select * from " + JOB_TABLE
+        + " WHERE " + ID_COLUMN + " LIKE '%" + jobSearch.get(0) + "%'"
+        + " AND " + NAME_COLUMN + " LIKE '%" + jobSearch.get(1) + "%'"
+        + " AND " + STATUS_COLUMN + " LIKE '%" + jobSearch.get(2) + "%'"
+        + " AND " + DESC_COLUMN + " LIKE '%" + jobSearch.get(3) + "%'";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        // looping through all rows and adding to list
+        Cursor cursor = db.rawQuery(sql, null);
 
         while (cursor.moveToNext()){
                 Job job = new Job();
@@ -124,18 +122,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public int updateJob(Job job) {
         SQLiteDatabase db = this.getWritableDatabase();
+        String selection = ID_COLUMN + " LIKE ?";
+        String[] selectionArgs = new String[]{job.getId()};
         ContentValues values = new ContentValues();
         values.put(NAME_COLUMN, job.getName());
         values.put(STATUS_COLUMN, job.getStatus());
         values.put(DESC_COLUMN, job.getDescription());
-        return db.update(JOB_TABLE, values, ID_COLUMN + " = ?",
-                new String[]{job.getId()});
+        return db.update(JOB_TABLE, values, selection, selectionArgs);
     }
 
-
-//    public Cursor getData() {
-//        SQLiteDatabase DB = this.getWritableDatabase();
-//        Cursor cursor = DB.rawQuery("select * from " + STUDENT_TABLE, null);
-//        return cursor;
-//    }
 }
