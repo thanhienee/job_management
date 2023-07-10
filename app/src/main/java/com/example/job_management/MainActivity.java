@@ -24,7 +24,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        bindingView();
+        edt_id = findViewById(R.id.edt_id);
+        edt_name = findViewById(R.id.edt_name);
+        edt_status = findViewById(R.id.edt_status);
+        edt_desc = findViewById(R.id.edt_desc);
+        btn_add = findViewById(R.id.btn_add);
+        btn_update = findViewById(R.id.btn_update);
+        btn_delete = findViewById(R.id.btn_delete);
+        btn_list = findViewById(R.id.btn_list);
+        recyclerView = findViewById(R.id.recyclerView);
         DB = new SQLiteHelper(this);
         jobList = new ArrayList<>();
 
@@ -131,16 +139,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void bindingView() {
-        edt_id = findViewById(R.id.edt_id);
-        edt_name = findViewById(R.id.edt_name);
-        edt_status = findViewById(R.id.edt_status);
-        edt_desc = findViewById(R.id.edt_desc);
-        btn_add = findViewById(R.id.btn_add);
-        btn_update = findViewById(R.id.btn_update);
-        btn_delete = findViewById(R.id.btn_delete);
-        btn_list = findViewById(R.id.btn_list);
-        recyclerView = findViewById(R.id.recyclerView);
-    }
+
 }
 
